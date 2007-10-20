@@ -1,0 +1,215 @@
+*nosql.txt*   A simple syntax files for NoSQL files             *nosql* 
+              Version 0.1
+              Last change: 2007 Oct 20
+
+Bill Powell
+http://www.billpowellisalive.com
+bill@billpowellisalive.com
+
+
+Contents:
+
+    INTRODUCTION                               |nosql-intro|
+    LICENSE                                    |nosql-license|
+    VERSION                                    |nosql-version|
+    INSTALLING NOSQL                           |nosql-install|
+      FILES (typical Linux install)            |nosql-files| 
+    USAGE                                      |nosql-usage|
+    EXTENSIONS                                 |nosql-extenions|
+    RESOURCES                                  |nosql-usage|
+    CHANGELOG                                  |nosql-changelog|
+    TODO                                       |nosql-todo|
+		BUGS                                       |nosql-bugs|
+
+-------------------------------------------------------------------------
+INTRODUCTION                                             *nosql-intro*
+
+This is a simple syntax file to color columns in NoSQL tables. It's a rather
+heavily modified version of the VimOutliner syntax file. Currently it supports
+up to 16 columns. If you need more than that, you can always tweak the file.
+
+Future versions might include helpful mappings for navigation, deleting
+columns, and so on, as well as syntax highlighting for NoSQL lists.
+
+NoSQL, of course, is a delightful and free collection of scripts that can
+turn flat text files into databases. Instead of locking your data in binary
+and slogging through phpMyAdmin, you can open your tables in Vim, 
+edit your data with your usual Vim flair, and then save your queries and
+reports as shell scripts. If you don't yet have NoSQL installed, check out the
+|nosql-resources| below.
+
+-------------------------------------------------------------------------
+LICENSE                                                  *nosql-license*
+
+    nosql.vim      Copyright (C) 2007 by Bill Powell
+
+    Licensed under the GNU General Public License (GPL), version 2
+    ABSOLUTELY NO WARRANTY, see COPYING file for details.
+    
+    If your distro doesn't come with this file:
+        HTML: http://www.gnu.org/copyleft/gpl.html
+        Text: http://www.gnu.org/copyleft/gpl.txt 
+
+-------------------------------------------------------------------------
+VERSION                                                  *nosql-version*
+
+	Version 0.1
+  Released 2007 20 Oct
+
+  Beta release: Basic syntax file for NoSQL tables.
+
+  See |nosql-changelog| for history.
+
+-------------------------------------------------------------------------
+INSTALLING NOSQL.VIM                                     *nosql-install*
+
+There's nothing fancy about nosql.vim; it's just this help file, a syntax
+file, and a small ftdetect file that should fire up the syntax file when you
+open a nosql table with an .nsq extension.
+
+Simply unzip the tarball and the copy the subdirectories into your $VIM
+directory. Although the list below uses a Linux location, nosql.vim should
+work on any platform running Vim.
+
+	FILES (typical Linux install):                           *nosql-files* 
+
+		$HOME/.vim/doc/ ~
+			nosql.txt         : This very file.
+		$HOME/.vim/ftdetect/ ~
+			nsq.vim           : Autodetect *.nsq files
+		$HOME/.vim/syntax/ ~
+			nosql.vim         : Syntax for NoSQL tables
+
+-------------------------------------------------------------------------
+USAGE                                                  *nosql-usage*
+
+With these files in place, you ought to be able to open any .nsq file and see
+your table properly highlighted.
+
+If the syntax doesn't load, just try:
+
+:set syn=nosql
+
+As usual, run :helptags $VIM/doc/ to be able to access this help from within
+Vim.
+
+The syntax file sets a default tabstop and shiftwidth of 10. You can easily
+change this either in the syntax file or else in your buffer with, say,
+
+:set tabstop=16
+
+I haven't yet figured out how to use modelines in a NoSQL table without
+breaking it, so you'll have to reset this every time unless you save a view of
+the file.
+
+Header Line: ~
+
+Don't forget that nosql (the program) is justifiably picky about its syntax.
+Each column in the header row must begin with , a nonprintable character
+which you get in Vim with <C-V><C-A>.
+
+Sample header row:
+
+num	client	amt	billed	paid	deposit	comment	desc
+
+The header row will appear as all one color to distinguish it from the data.
+
+Be sure to use real <Tab>s: ~
+
+Certain settings in Vim (|'expandtab'|, |'smarttab'|) will silently replace
+<Tab>s with white space. Naturally, this will wreak silent havoc on your table.
+The syntax file sets these options off, but one never knows. If in doubt, you
+can turn |'hlsearch'| on and searchfor \t (the regular expression for <Tab>).
+Or use <C-V><C-I>, which is a guaranteed <Tab>. (And also pretty tedious.)
+
+
+Don't edit the tables with NoSQL 'edittable': ~
+
+NoSQL comes with a facility for editing your tables, but I'd use that or I'd use
+this. I wouldn't use both. At least, I had trouble when I did; if that was a
+quirk on my system, let me know and I'll update this doc in a future release.
+
+
+Won't run in NoSQL? ~
+
+If your NoSQL table has a proper header row, and proper data rows, all with
+the same number of <Tab>-separated columns, _and nothing else_, your file
+really ought to run. I'm afraid you'll have to take it up with NoSQL; for
+instance, there are certain limitations on which characters you can begin data
+with.
+
+-------------------------------------------------------------------------
+NOSQL EXTENSIONS                                       *nosql-extensions*
+
+  nsq      NoSQL table
+  lst      NoSQL list            (not yet implemented in nosql.vim)
+	tpl,xrf  NoSQL table template  (not yet implemented in nosql.vim)
+
+The ftdetect file is set to automatically recognize NoSQL tables with an
+extension of "nsq". While there's currently no official extension for NoSQL
+tables, this seems a sensible choice.
+
+Carlo Strozzi, author of NoSQL, suggested this scheme on the mailing list at
+noseequel@scriptaworks.com on 2007-10-15:
+
+> I have purposefully decided not to enforce any particular extension,
+> leaving that up to local policies, but if I had to pick one I'd probably
+> go for ".nsq" for tables, ".lst" for lists and either ".tpl" or ".xrf"
+> for table templates. To make sure and pick really unique strings one
+> would have to apply for an official MIME type, which I haven't yet.
+
+Note that neither lists nor templates get any syntax highlighting in this
+version of nosql.vim, primarily because I haven't yet used them. :)
+Expect them in future releases.
+
+A NoSQL list is an alternate way of storing data which can be converted to a
+NoSQL table, and vice versa. One advantage of a list seems to be the ability
+to store multiple lines of text in the same row. See here for more
+information:
+
+http://www.scriptaworks.com/cgi-bin/wiki.sh/NoSQL/TableStructure  
+
+It might be problematic detecting for these, however, since certain Vim
+scripts use the .lst extension for the list of files included in the package.
+
+A NoSQL template is a simple list of column names, with optional comments,
+which can be used to build a table. The syntax for such a beast should be
+absurdly simple, so ... feel free to contribute. ;) 
+
+-------------------------------------------------------------------------
+RESOURCES                                                *nosql-resources*
+
+NoSQL Homepage:
+http://www.scriptaworks.com/cgi-bin/wiki.cgi/NoSQL/HomePage?from=NoSQL.NoSQL  
+
+A tutorial for NoSQL by Steve Litt (original author of VimOutliner):
+http://www.troubleshooters.com/lpm/200704/200704.htm
+
+-------------------------------------------------------------------------
+CHANGELOG                                                *nosql-changelog*
+
+	0.1 2007 20 Oct
+		Beta release: Basic syntax file for NoSQL tables.
+
+-------------------------------------------------------------------------
+TODO                                                        *nosql-todo*
+
+  Syntax highlighting for lists and templates.
+	Mappings, e.g., for easy navigation, insertion, deletion.
+	
+-------------------------------------------------------------------------
+BUGS                                                        *nosql-bugs*
+
+  You tell me. :)
+
+
+-------------------------------------------------------------------------
+                                                   *chesterton-adventure*
+
+   An adventure is only an inconvenience rightly considered. 
+   An inconvenience is only an adventure wrongly considered.
+
+                                                  -- G. K. Chesterton
+
+
+vim:ts=2 sw=2 noexpandtab tw=78 ft=help:
