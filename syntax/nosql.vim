@@ -7,6 +7,9 @@
 " Need to set $VIM to wherever you install local plugins.
  
 syntax clear
+" Comment this line out if want to use this for "plain
+" vanilla" TSV files.
+"
 syntax region HeaderLine start=++ end=+$+ 
 "First field begins at start of a line.
 "Note \p for "isprintable" (not )
@@ -52,7 +55,7 @@ hi link Field16 Comment
 
 
 "Some sane fields.
-set tabstop=10
-set shiftwidth=10
+set tabstop=20
+set shiftwidth=20
 set noexpandtab
 set nosmarttab

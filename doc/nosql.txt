@@ -15,28 +15,23 @@ Contents:
     INSTALLING NOSQL                           |nosql-install|
       FILES (typical Linux install)            |nosql-files| 
     USAGE                                      |nosql-usage|
+    TSV TABLES AND PERL                        |nosql-tsv-perl|
     EXTENSIONS                                 |nosql-extenions|
     RESOURCES                                  |nosql-usage|
     CHANGELOG                                  |nosql-changelog|
     TODO                                       |nosql-todo|
-		BUGS                                       |nosql-bugs|
+    BUGS                                       |nosql-bugs|
 
 -------------------------------------------------------------------------
 INTRODUCTION                                             *nosql-intro*
 
-This is a simple syntax file to color columns in NoSQL tables. It's a rather
-heavily modified version of the VimOutliner syntax file. Currently it supports
-up to 16 columns. If you need more than that, you can always tweak the file.
+There's nothing fancy about nosql.vim; it's just this help file, a syntax
+file, and a small ftdetect file that should fire up the syntax file when you
+open a nosql table with an .nsq extension.
 
-Future versions might include helpful mappings for navigation, deleting
-columns, and so on, as well as syntax highlighting for NoSQL lists.
-
-NoSQL, of course, is a delightful and free collection of scripts that can
-turn flat text files into databases. Instead of locking your data in binary
-and slogging through phpMyAdmin, you can open your tables in Vim, 
-edit your data with your usual Vim flair, and then save your queries and
-reports as shell scripts. If you don't yet have NoSQL installed, check out the
-|nosql-resources| below.
+Simply unzip the tarball and the copy the subdirectories into your $VIM
+directory. Although the list below uses a Linux location, nosql.vim should
+work on any platform running Vim.
 
 -------------------------------------------------------------------------
 LICENSE                                                  *nosql-license*
@@ -53,10 +48,11 @@ LICENSE                                                  *nosql-license*
 -------------------------------------------------------------------------
 VERSION                                                  *nosql-version*
 
-	Version 0.1
-  Released 2007 20 Oct
+  Version 0.2
+  Released 2008 11 Sep
 
-  Beta release: Basic syntax file for NoSQL tables.
+  - Added section "TSV TABLES AND PERL"
+  - Increased default tabstop and shiftwidth.
 
   See |nosql-changelog| for history.
 
@@ -71,14 +67,14 @@ Simply unzip the tarball and the copy the subdirectories into your $VIM
 directory. Although the list below uses a Linux location, nosql.vim should
 work on any platform running Vim.
 
-	FILES (typical Linux install):                           *nosql-files* 
+  FILES (typical Linux install):                           *nosql-files* 
 
-		$HOME/.vim/doc/ ~
-			nosql.txt         : This very file.
-		$HOME/.vim/ftdetect/ ~
-			nsq.vim           : Autodetect *.nsq files
-		$HOME/.vim/syntax/ ~
-			nosql.vim         : Syntax for NoSQL tables
+    $HOME/.vim/doc/ ~
+      nosql.txt         : This very file.
+    $HOME/.vim/ftdetect/ ~
+      nsq.vim           : Autodetect *.nsq files
+    $HOME/.vim/syntax/ ~
+      nosql.vim         : Syntax for NoSQL tables
 
 -------------------------------------------------------------------------
 USAGE                                                  *nosql-usage*
@@ -110,7 +106,7 @@ which you get in Vim with <C-V><C-A>.
 
 Sample header row:
 
-num	client	amt	billed	paid	deposit	comment	desc
+num  client  amt  billed  paid  deposit  comment  desc
 
 The header row will appear as all one color to distinguish it from the data.
 
@@ -139,15 +135,49 @@ instance, there are certain limitations on which characters you can begin data
 with.
 
 -------------------------------------------------------------------------
+TSV TABLES AND PERL                                      *nosql-tsv-perl*
+
+Since NoSQL tables are just TSV (tab-separated) tables, this syntax file will
+work on any TSV table you like. The only special thing about NoSQL is the
+ that goes before each column in the header row. Otherwise, it's just a
+plain text file of tab-separated information.
+
+For instance, you can access TSV tables in perl, e.g., using the DBI module
+and DBI::AnyData. For example, to access a list of photos:
+
+
+use DBI;
+our $fphotos = "photos.tsv";
+our $pdbh = DBI->connect('dbi:AnyData(RaiseError=>1):');
+$pdbh->func( 'photos', 'Tab', "$fphotos", 'ad_catalog' );
+
+our $psth = $pdbh->prepare("SELECT * FROM photos WHERE fphoto=?");
+our $fphoto="sunrise";
+$psth->execute($fphoto);
+our $prow = $psth->fetchrow_hashref;
+
+our $title = $prow->{title};
+our $date = $prow->{date};
+
+
+This is just a perl snippet; the DBI documentation will explain more.
+
+Note that you'll need to remove the ^A characters in the header line to access
+a NoSQL table with DBI like this. That's the only difference I've noted.
+Once you start accessing your plain text tables with perl, you might not go 
+back to NoSQL. :)
+
+
+-------------------------------------------------------------------------
 NOSQL EXTENSIONS                                       *nosql-extensions*
 
   nsq      NoSQL table
   lst      NoSQL list            (not yet implemented in nosql.vim)
-	tpl,xrf  NoSQL table template  (not yet implemented in nosql.vim)
+  tpl,xrf  NoSQL table template  (not yet implemented in nosql.vim)
 
 The ftdetect file is set to automatically recognize NoSQL tables with an
 extension of "nsq". While there's currently no official extension for NoSQL
-tables, this seems a sensible choice.
+tables, this seems a sensible choice. 
 
 Carlo Strozzi, author of NoSQL, suggested this scheme on the mailing list at
 noseequel@scriptaworks.com on 2007-10-15:
@@ -188,15 +218,18 @@ http://www.troubleshooters.com/lpm/200704/200704.htm
 -------------------------------------------------------------------------
 CHANGELOG                                                *nosql-changelog*
 
-	0.1 2007 20 Oct
-		Beta release: Basic syntax file for NoSQL tables.
+  0.1 2007 20 Oct
+    Beta release: Basic syntax file for NoSQL tables.
+  0.2 Released 2008 11 Sep
+   - Added section "TSV TABLES AND PERL"
+   - Increased default tabstop and shiftwidth.
 
 -------------------------------------------------------------------------
 TODO                                                        *nosql-todo*
 
   Syntax highlighting for lists and templates.
-	Mappings, e.g., for easy navigation, insertion, deletion.
-	
+  Mappings, e.g., for easy navigation, insertion, deletion.
+  
 -------------------------------------------------------------------------
 BUGS                                                        *nosql-bugs*
 
